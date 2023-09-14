@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if user.is_authenticated %}
+    <div class="contUser">
+        <p class="textUser">Hola, {{user.username}}</p>
+        <a class="logoutColor" href="/logout">Salir</a>
+    </div>
+
+    <form action="" method="POST" class="py-3 px-4 d-flex formCont">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="div-field px-2">
+                <label class="form-label my-0">{{ field.label }}</label>
+                <div id="{{ field.label }}">
+                    {{ field }}
+                </div>
+            </div>
+        {% endfor %}
+        <button class="btn btn-primary px-2 filtrarBtn" style="width: 100px" type="submit">
+            Filtrar
+        </button>
+    </form>
+
+    <div class="tabla-datos mt-3 tablaCont">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID Orden</th>
+                    <th scope="col">Fecha de pedido</th>
+                    <th scope="col">Fecha de envío</th>
+                    <th scope="col">Dirección 1</th>
+                    <th scope="col">Dirección 2</th>
+                    <th scope="col">Ciudad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in dato %}
+                <tr>
+                    <th scope="row">{{item.salesorderid}}</th>
+                    <td>{{item.orderdate}}</td>
+                    <td>{{item.shipdate}}</td>
+                    <td>{{item.shiptoaddressid__addressline1}}</td>
+                    <td>{{item.shiptoaddressid__addressline2}}</td>
+                    <td>{{item.shiptoaddressid__city}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>  
+
+    <nav aria-label="...">
+        <ul class="pagination justify-content-center mt-4">
+            {% if dato.has_previous %}
+                <li class="page-item"><a class="page-link" href="?pagina=1">&laquo Primera</a> </li>
+                <li class="page-item"><a class="page-link" href="?pagina={{ dato.previous_page_number }}">Anterior</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link">&laquo Primera</a></li>
+                <li class="page-item disabled"><a class="page-link">Anterior</a></li>
+            {% endif %}
+                <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ dato.number }}</a></li>
+            {% if dato.has_next %}
+                <li class="page-item"><a class="page-link" href="?pagina={{ dato.next_page_number }}">Siguiente</a></li>
+                <li class="page-item"><a class="page-link" href="?pagina={{ dato.paginator.num_pages }}">Última &raquo</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">Siguiente</a></li>
+                <li class="page-item disabled"><a class="page-link" href="#">Última &raquo</a></li>
+            {% endif %}
+        </ul>
+      </nav>
+    
+    <button id="scrollTopBtn" class="scrollTopBtn">Subir</button>
+
+{% else %}
+
+    <div class="noLogin">
+        <p>Lo sentimos, debe iniciar sesión para acceder al sistema.</p>
+        <p>Puede iniciar con sus credenciales <a class="loginColor" href="/login">aquí</a>.</p>
+    </div>
+   
+{% endif %}
+
+
+{% endblock %}
